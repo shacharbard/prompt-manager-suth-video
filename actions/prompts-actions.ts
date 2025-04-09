@@ -3,7 +3,8 @@
 import { db } from "@/db";
 import { prompts } from "@/db/schema/prompts-schema";
 import { devDelay } from "@/lib/dev-delay";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
+import { requireUserId } from "./auth-actions";
 
 /**
  * Fetches all prompts from the database
@@ -11,10 +12,11 @@ import { desc, eq } from "drizzle-orm";
  */
 export async function getPrompts() {
   try {
+    const userId = await requireUserId();
     // Add artificial delay in development
     await devDelay();
 
-    const allPrompts = await db.select().from(prompts).orderBy(desc(prompts.created_at));
+    const allPrompts = await db.select().from(prompts).where(eq(prompts.user_id, userId)).orderBy(desc(prompts.created_at));
     return allPrompts;
   } catch (error) {
     console.error("Error fetching prompts:", error);
@@ -31,6 +33,7 @@ export async function getPrompts() {
  */
 export async function createPrompt({ name, description, content }: { name: string; description: string; content: string }) {
   try {
+    const userId = await requireUserId();
     // Add artificial delay in development
     await devDelay();
 
@@ -40,7 +43,8 @@ export async function createPrompt({ name, description, content }: { name: strin
       .values({
         name,
         description,
-        content
+        content,
+        user_id: userId
       })
       .returning();
 
@@ -61,6 +65,7 @@ export async function createPrompt({ name, description, content }: { name: strin
  */
 export async function updatePrompt({ id, name, description, content }: { id: number; name: string; description: string; content: string }) {
   try {
+    const userId = await requireUserId();
     // Add artificial delay in development
     await devDelay();
 
@@ -73,7 +78,7 @@ export async function updatePrompt({ id, name, description, content }: { id: num
         content,
         updated_at: new Date()
       })
-      .where(eq(prompts.id, id))
+      .where(and(eq(prompts.id, id), eq(prompts.user_id, userId)))
       .returning();
 
     if (!updatedPrompt) {
@@ -94,11 +99,15 @@ export async function updatePrompt({ id, name, description, content }: { id: num
  */
 export async function deletePrompt(id: number) {
   try {
+    const userId = await requireUserId();
     // Add artificial delay in development
     await devDelay();
 
     // Delete the prompt
-    const [deletedPrompt] = await db.delete(prompts).where(eq(prompts.id, id)).returning();
+    const [deletedPrompt] = await db
+      .delete(prompts)
+      .where(and(eq(prompts.id, id), eq(prompts.user_id, userId)))
+      .returning();
 
     if (!deletedPrompt) {
       throw new Error("Prompt not found");
