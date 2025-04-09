@@ -7,25 +7,18 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { SelectPrompt } from "@/db/schema/prompts-schema";
 import { motion } from "framer-motion";
 import { Check, Copy, Edit2, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
-// Type for a prompt
-interface Prompt {
-  id: number;
-  name: string;
-  description: string;
-  content: string;
-}
-
 interface PromptsGridProps {
-  initialPrompts: Prompt[];
+  initialPrompts: SelectPrompt[];
 }
 
 export const PromptsGrid = ({ initialPrompts }: PromptsGridProps) => {
   // State for prompts and UI
-  const [prompts, setPrompts] = useState<Prompt[]>(initialPrompts);
+  const [prompts, setPrompts] = useState<SelectPrompt[]>(initialPrompts);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -44,7 +37,7 @@ export const PromptsGrid = ({ initialPrompts }: PromptsGridProps) => {
   });
 
   // Function to copy prompt content to clipboard
-  const copyToClipboard = async (prompt: Prompt) => {
+  const copyToClipboard = async (prompt: SelectPrompt) => {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setCopiedId(prompt.id);
@@ -62,7 +55,7 @@ export const PromptsGrid = ({ initialPrompts }: PromptsGridProps) => {
   };
 
   // Function to start editing a prompt
-  const startEditing = (prompt: Prompt) => {
+  const startEditing = (prompt: SelectPrompt) => {
     setFormData({
       name: prompt.name,
       description: prompt.description,

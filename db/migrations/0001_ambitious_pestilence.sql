@@ -1,0 +1,1 @@
+ALTER TABLE "prompts" ADD COLUMN "user_id" text NOT NULL;

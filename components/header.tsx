@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { BookMarked } from "lucide-react";
 import Link from "next/link";
@@ -54,6 +56,16 @@ export const Header = () => {
                 </Link>
               </motion.div>
             ))}
+
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button>Sign In</Button>
+              </SignInButton>
+            </SignedOut>
           </nav>
         </div>
       </div>
