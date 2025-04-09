@@ -18,7 +18,7 @@ This project is a prompt manager where I store all my favorite prompts for easy 
 Frontend: Next.js, Tailwind, Shadcn, Framer Motion
 Backend: PostgreSQL, Supabase, Drizzle
 Auth: Clerk
-
+Payments: Stripe
 
 ## General Rules
 
@@ -58,6 +58,9 @@ Auth: Clerk
 - Use Clerk server-side helpers (auth()) in Server Actions to get the user ID
 
 
-
+## Payment Rules
+- Use Stripe for payments
+- handle Stripe webhooks in /api/stripe/webhooks
+- we have customers table for storing customer ids and subscription ids
 
 
